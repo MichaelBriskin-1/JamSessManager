@@ -9,21 +9,25 @@ function Login({ setCurrentUser }) {
   const navigate = useNavigate();
 
   const handleLogin = async () => {
+    if (!username || !password) {
+      alert('Please enter both username and password.');
+      return;
+    }
     try {
-      await axios.post('http://localhost:5000/users/login', {
+      const res = await axios.post('http://localhost:5000/api/users/login', {
         username,
         password,
       });
 
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("role", res.data.user.role);
+      localStorage.setItem('token', res.data.token);
+      localStorage.setItem('role', res.data.user.role);
+      setCurrentUser(res.data.user);
 
-      navigate(res.data.user.role === "admin" ? "/main/admin" : "/main");
-      
+      navigate(res.data.user.role === 'admin' ? '/main/admin' : '/main');
     } catch (error) {
-      console.log(error);
+      alert('Invalid username or password');
     }
-  }
+  };
   return (
     <div>
       <input
@@ -40,7 +44,7 @@ function Login({ setCurrentUser }) {
         onChange={(e) => setPassword(e.target.value)}
       />
       <br />
-      <button>Login</button>
+      <button onClick={handleLogin}>Login</button>
       <Link to={'/signup'}>
         <button>Sign up</button>
       </Link>

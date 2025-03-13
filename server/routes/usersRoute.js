@@ -5,7 +5,25 @@ const User = require('../models/userModel');
 
 const router = express.Router();
 
-router.post('/signup/', async (req, res) => {
+router.get('/', async (req, res) => {
+  try {
+    const users = await User.find();
+    res.json(users);
+  } catch (error) {
+    res.json({ message: 'Error getting users', error });
+  }
+});
+
+router.get('/selected-song', async (req, res) => {
+  try {
+    const song = await Song.findOne({ selected: true });
+    res.json({ song });
+  } catch (error) {
+    res.json({ message: 'Error getting selected song', error });
+  }
+});
+
+router.post('/signup', async (req, res) => {
   try {
     const { username, password, instrument, role } = req.body;
 

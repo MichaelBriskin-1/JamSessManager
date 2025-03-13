@@ -65,7 +65,7 @@ function Signup() {
         <option value="vocals">vocals</option>
       </select>
       <br />
-      <button onClick={handleSignup}>{isAdminSignup ? "Create Admin Account" : "Create Player Account"}</button>
+      <button onClick={handleSignup}>{isAdmin ? "Create Admin Account" : "Create Player Account"}</button>
     </div>
   );
 }
