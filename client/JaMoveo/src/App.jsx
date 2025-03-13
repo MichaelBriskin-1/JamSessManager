@@ -11,8 +11,9 @@ function App() {
     <div>
       <h1>JaMoveo</h1>
       <Routes>
-        <Route path="/" element={<Login />} />
+        <Route path="/" element={<Login setCurrentUser={setCurrentUser} />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/admin-signup" element={<Signup />} />
       </Routes>
     </div>
   );

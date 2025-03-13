@@ -1,22 +1,32 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-
+import { useLocation, useNavigate } from 'react-router-dom';
 
 function Signup() {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const isAdmin = location.pathname.includes('admin');
+
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [instrument, setInstrument] = useState('');
 
   const handleSignup = async () => {
+    if (!username || !password || !instrument) {
+      alert('All fields are required');
+      return;
+    }
+
     try {
       const res = await axios.post('http://localhost:5000/api/users/signup', {
         username,
         password,
         instrument,
+        role: isAdmin ? 'admin' : 'player',
       });
       console.log(res.data);
+      // TO DO - ALERT FOR USERNAME ALREADY IN USE
       alert('User created successfully');
       navigate('/');
     } catch (error) {
@@ -27,6 +37,7 @@ function Signup() {
 
   return (
     <div>
+      <h2>{isAdmin ? 'Admin Signup' : 'Player Signup'}</h2>
       <input
         type="text"
         placeholder="username"
@@ -54,7 +65,7 @@ function Signup() {
         <option value="vocals">vocals</option>
       </select>
       <br />
-      <button onClick={handleSignup}>Create User</button>
+      <button onClick={handleSignup}>{isAdminSignup ? "Create Admin Account" : "Create Player Account"}</button>
     </div>
   );
 }

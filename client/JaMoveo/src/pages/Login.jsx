@@ -1,14 +1,29 @@
 import React from 'react';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
-function Login() {
+function Login({ setCurrentUser }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
+  const handleLogin = async () => {
+    try {
+      await axios.post('http://localhost:5000/users/login', {
+        username,
+        password,
+      });
 
-  
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("role", res.data.user.role);
 
+      navigate(res.data.user.role === "admin" ? "/main/admin" : "/main");
+      
+    } catch (error) {
+      console.log(error);
+    }
+  }
   return (
     <div>
       <input
