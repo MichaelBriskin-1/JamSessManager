@@ -2,23 +2,33 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { io } from 'socket.io-client';
-
-const socket = io('http://localhost:5000');
+const API_URL = import.meta.env.VITE_BACKEND_URL;
+const socket = io(API_URL);
+import './MainPage.css';
 
 function MainPage() {
   const navigate = useNavigate();
-  const [song, setSong] = useState([]);
   const [role, setRole] = useState(localStorage.getItem('role'));
-  const [instrument, setInstrument] = useState(
-    localStorage.getItem('instrument')
-  );
+  const [song, setSong] = useState(null);
   const [songSearch, setSongSearch] = useState('');
+  const [songList, setSongList] = useState([]);
   const [filteredSongs, setFilteredSongs] = useState([]);
 
   useEffect(() => {
-    axios.get('/songs.json').then((res) => {
-      setSongs(res.data);
-    });
+    axios
+      .get(`${API_URL}/api/songs`)
+      .then((res) => {
+        if (Array.isArray(res.data)) {
+          setSongList(res.data);
+        } else {
+          console.error('Error: Expected an array but got', res.data);
+          setSongList([]);
+        }
+      })
+      .catch((error) => {
+        console.error('Error fetching songs:', error);
+        setSongList([]);
+      });
 
     socket.on('songUpdate', (newSong) => {
       if (newSong) {
@@ -33,25 +43,26 @@ function MainPage() {
   }, [navigate]);
 
   const handleSearch = () => {
-    if (!songSearch) return;
+    if (!songSearch.trim()) return;
+
+    if (!Array.isArray(songList)) {
+      console.error('handleSearch Error: songList is not an array', songList);
+      return;
+    }
+
     setFilteredSongs(
-      songs.filter(
-        (song) =>
-          song.title.toLowerCase().includes(songSearch.toLowerCase()) ||
-          song.artist.toLowerCase().includes(songSearch.toLowerCase())
+      songList.filter((songName) =>
+        songName.toLowerCase().includes(songSearch.toLowerCase())
       )
     );
   };
 
-  const handleSelectSong = async (song) => {
+  const handleSelectSong = async (songName) => {
     try {
-      const token = localStorage.getItem('token');
-      await axios.post(`localhost:5000/api/users/select-song`, {
-        ...song,
-        token,
-      });
-
-      alert(`Song selected: ${song.title}`);
+      const res = await axios.get(`/songs/${songName}.json`);
+      const songData = res.data;
+      await axios.post(`${API_URL}/api/songs/select`, songData);
+      alert(`Song selected: ${songData.title}`);
     } catch (error) {
       alert('Error selecting song');
     }

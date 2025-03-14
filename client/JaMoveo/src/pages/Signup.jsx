@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
+const API_URL = import.meta.env.VITE_BACKEND_URL;
+import './Signup.css';
 
 function Signup() {
   const navigate = useNavigate();
@@ -19,7 +21,7 @@ function Signup() {
     }
 
     try {
-      const res = await axios.post('http://localhost:5000/api/users/signup', {
+      const res = await axios.post(`${API_URL}/api/users/signup`, {
         username,
         password,
         instrument,
@@ -36,7 +38,7 @@ function Signup() {
   };
 
   return (
-    <div>
+    <div className="signup-container">
       <h2>{isAdmin ? 'Admin Signup' : 'Player Signup'}</h2>
       <input
         type="text"
@@ -65,7 +67,9 @@ function Signup() {
         <option value="vocals">vocals</option>
       </select>
       <br />
-      <button onClick={handleSignup}>{isAdmin ? "Create Admin Account" : "Create Player Account"}</button>
+      <button onClick={handleSignup}>
+        {isAdmin ? 'Create Admin Account' : 'Create Player Account'}
+      </button>
     </div>
   );
 }

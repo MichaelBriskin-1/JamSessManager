@@ -5,6 +5,7 @@ const http = require('http');
 const { Server } = require('socket.io');
 const connectDB = require('./configs/db');
 const usersRoute = require('./routes/usersRoute');
+const songsRoute = require('./routes/songsRoute');
 
 const app = express();
 const server = http.createServer(app);
@@ -22,6 +23,7 @@ connectDB();
 app.use(express.json());
 app.use(cors());
 app.use('/api/users', usersRoute);
+app.use('/api/songs', songsRoute);
 
 let selectedSong = null;
 io.on('connection', (socket) => {
@@ -33,7 +35,12 @@ io.on('connection', (socket) => {
     console.log('A user disconnected.');
   });
 });
-
+io.on('connection', (socket) => {
+  socket.on('quitSong', () => {
+    selectedSong = null;
+    io.emit('quitSong'); 
+  });
+});
 app.get('/api/users/selected-song', (req, res) => {
   res.json({ song: selectedSong });
 });

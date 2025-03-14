@@ -2,6 +2,8 @@ import React from 'react';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import './Login.css';
+const API_URL = import.meta.env.VITE_BACKEND_URL;
 
 function Login({ setCurrentUser }) {
   const [username, setUsername] = useState('');
@@ -14,13 +16,14 @@ function Login({ setCurrentUser }) {
       return;
     }
     try {
-      const res = await axios.post('http://localhost:5000/api/users/login', {
+      const res = await axios.post(`${API_URL}/api/users/login`, {
         username,
         password,
       });
 
       localStorage.setItem('token', res.data.token);
       localStorage.setItem('role', res.data.user.role);
+      localStorage.setItem('instrument', res.data.user.instrument);
       setCurrentUser(res.data.user);
 
       navigate('/main');
@@ -29,7 +32,8 @@ function Login({ setCurrentUser }) {
     }
   };
   return (
-    <div>
+    <div className="login-container">
+      <h1>Login</h1>
       <input
         value={username}
         onChange={(e) => setUsername(e.target.value)}

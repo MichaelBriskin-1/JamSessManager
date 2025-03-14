@@ -3,7 +3,8 @@ import './App.css';
 import { Routes, Route } from 'react-router-dom';
 import Signup from './pages/Signup';
 import Login from './pages/Login';
-import MainPage  from "./pages/MainPage";
+import MainPage from './pages/MainPage';
+import LivePage from './pages/LivePage';
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
 
@@ -15,6 +16,7 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/admin-signup" element={<Signup />} />
         <Route path="/main" element={<MainPage />} />
+        <Route path="/livepage" element={<LivePage />} />
       </Routes>
     </div>
   );
