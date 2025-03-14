@@ -23,7 +23,7 @@ function Login({ setCurrentUser }) {
       localStorage.setItem('role', res.data.user.role);
       setCurrentUser(res.data.user);
 
-      navigate(res.data.user.role === 'admin' ? '/main/admin' : '/main');
+      navigate('/main');
     } catch (error) {
       alert('Invalid username or password');
     }
