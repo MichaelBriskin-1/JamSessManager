@@ -4,7 +4,7 @@ import axios from 'axios';
 import { io } from 'socket.io-client';
 const API_URL = import.meta.env.VITE_BACKEND_URL;
 const socket = io(API_URL);
-import './MainPage.css';
+import './styles/MainPage.css';
 
 function MainPage() {
   const navigate = useNavigate();
@@ -14,59 +14,39 @@ function MainPage() {
   const [songList, setSongList] = useState([]);
   const [filteredSongs, setFilteredSongs] = useState([]);
 
-  useEffect(() => {
+  
+  const handleSearch = () => {
+    if (!songSearch.trim()) 
+      return;
+
     axios
-      .get(`${API_URL}/api/songs`)
+      .get(`${API_URL}/api/songs/${songSearch}`)
       .then((res) => {
-        if (Array.isArray(res.data)) {
+        if (Array.isArray(res.data) && res.data.length > 0) {
           setSongList(res.data);
+          console.log(`Songs List: ${songList}`);
+        
+          navigate('/result',{ state: { songList: res.data } });
         } else {
-          console.error('Error: Expected an array but got', res.data);
-          setSongList([]);
+          alert("No songs found! Try a different search term."); // Show an alert
         }
       })
       .catch((error) => {
         console.error('Error fetching songs:', error);
         setSongList([]);
       });
-
-    socket.on('songUpdate', (newSong) => {
-      if (newSong) {
-        setSong(newSong);
-        navigate('/live');
-      }
-    });
-
-    return () => {
-      socket.off('songUpdate');
-    };
-  }, [navigate]);
-
-  const handleSearch = () => {
-    if (!songSearch.trim()) return;
-
-    if (!Array.isArray(songList)) {
-      console.error('handleSearch Error: songList is not an array', songList);
-      return;
-    }
-
-    setFilteredSongs(
-      songList.filter((songName) =>
-        songName.toLowerCase().includes(songSearch.toLowerCase())
-      )
-    );
+    
   };
 
-  const handleSelectSong = async (songName) => {
-    try {
-      const res = await axios.get(`/songs/${songName}.json`);
-      const songData = res.data;
-      await axios.post(`${API_URL}/api/songs/select`, songData);
-      alert(`Song selected: ${songData.title}`);
-    } catch (error) {
-      alert('Error selecting song');
-    }
-  };
+  const navigateToLive = (songData) => {
+    navigate('/livepage', { state: {  songData } });
+  }
+
+  socket.on("songUpdate", (songData) => {
+    console.log("Received song update:", songData);
+    navigateToLive(songData); // Call your function with the received data
+  });
+
 
   return (
     <div className="main-container">
@@ -83,14 +63,6 @@ function MainPage() {
           />
           <button onClick={handleSearch}>Search</button>
 
-          <ul>
-            {filteredSongs.map((song, index) => (
-              <li key={index}>
-                <strong>{song.title}</strong> by {song.artist}
-                <button onClick={() => handleSelectSong(song)}>Select</button>
-              </li>
-            ))}
-          </ul>
         </>
       ) : (
         <h2>Waiting for next song...</h2>

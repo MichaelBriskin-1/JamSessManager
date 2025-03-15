@@ -1,21 +1,24 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { io } from 'socket.io-client';
-import './LivePage.css';
+import './styles/LivePage.css';
 
 const socket = io(import.meta.env.VITE_BACKEND_URL);
 
-
 function LivePage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [song, setSong] = useState(null);
   const [isScrolling, setIsScrolling] = useState(false);
+  const [songData, setSongData] = useState({});
   const songContainerRef = useRef(null);
 
   const role = localStorage.getItem('role');
   const instrument = localStorage.getItem('instrument');
 
   useEffect(() => {
+    setSongData(location.state?.songData || []);
+
     socket.on('songUpdate', (newSong) => {
       if (newSong) {
         setSong(newSong);
@@ -27,12 +30,13 @@ function LivePage() {
     socket.on('quitSong', () => {
       navigate('/main');
     });
+  }, [location.state]);
 
-    return () => {
-      socket.off('songUpdate');
-      socket.off('quitSong');
-    };
-  }, [navigate]);
+  //   return () => {
+  //     socket.off('songUpdate');
+  //     socket.off('quitSong');
+  //   };
+  // }, [navigate]);
 
   useEffect(() => {
     let scrollInterval;
@@ -51,11 +55,11 @@ function LivePage() {
     navigate('/main');
   };
 
-  return song ? (
+  return songData ? (
     <div className="live-container">
-      <h1 className="song-title">
+      {/* <h1 className="song-title">
         {song.title} - {song.artist}
-      </h1>
+      </h1> */}
 
       <div ref={songContainerRef} className="song-content">
         {song.map((line, lineIndex) => (

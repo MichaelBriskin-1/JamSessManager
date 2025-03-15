@@ -2,7 +2,7 @@ import React from 'react';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import './Login.css';
+import './styles/Login.css';
 const API_URL = import.meta.env.VITE_BACKEND_URL;
 
 function Login({ setCurrentUser }) {

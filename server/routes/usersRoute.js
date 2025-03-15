@@ -14,14 +14,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.get('/selected-song', async (req, res) => {
-  try {
-    const song = await Song.findOne({ selected: true });
-    res.json({ song });
-  } catch (error) {
-    res.json({ message: 'Error getting selected song', error });
-  }
-});
 
 router.post('/signup', async (req, res) => {
   try {
