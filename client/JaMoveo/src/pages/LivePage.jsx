@@ -8,20 +8,45 @@ const socket = io(import.meta.env.VITE_BACKEND_URL);
 function LivePage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [song, setSong] = useState(null);
   const [isScrolling, setIsScrolling] = useState(false);
-  const [songData, setSongData] = useState({});
+  const [songData, setSongData] = useState([]);
+  const [songName, setSongName] = useState('');
   const songContainerRef = useRef(null);
 
   const role = localStorage.getItem('role');
   const instrument = localStorage.getItem('instrument');
 
   useEffect(() => {
-    setSongData(location.state?.songData || []);
+    if (location.state?.songData) {
+      console.log('Received songData:', location.state.songData);
+      console.log('Received songName:', location.state.songName);
+      setSongName(
+        location.state.songName
+          .split(' ')
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(' ')
+      );
+      setSongData(location.state.songData);
+      localStorage.setItem('songData', JSON.stringify(location.state.songData));
+      localStorage.setItem('songName', JSON.stringify(location.state.songName));
+    } else {
+      const storedData = localStorage.getItem('songData');
+      if (storedData) {
+        setSongData(JSON.parse(storedData));
+      }
+    }
 
     socket.on('songUpdate', (newSong) => {
       if (newSong) {
-        setSong(newSong);
+        console.log('Received song update:', newSong);
+
+        // Ensure correct updates
+        setSongData(newSong.songData);
+        setSongName(newSong.songName);
+
+        // Store in localStorage for persistence
+        localStorage.setItem('songData', JSON.stringify(newSong.songData));
+        localStorage.setItem('songName', JSON.stringify(newSong.songName));
       } else {
         navigate('/main');
       }
@@ -31,12 +56,6 @@ function LivePage() {
       navigate('/main');
     });
   }, [location.state]);
-
-  //   return () => {
-  //     socket.off('songUpdate');
-  //     socket.off('quitSong');
-  //   };
-  // }, [navigate]);
 
   useEffect(() => {
     let scrollInterval;
@@ -55,25 +74,54 @@ function LivePage() {
     navigate('/main');
   };
 
+  let lineWords = '';
+  let lineChords = '';
   return songData ? (
     <div className="live-container">
-      {/* <h1 className="song-title">
-        {song.title} - {song.artist}
-      </h1> */}
+      <h1 className="song-title">{songName}</h1>
 
       <div ref={songContainerRef} className="song-content">
-        {song.map((line, lineIndex) => (
-          <div key={lineIndex} className="song-line">
-            {line.map((word, wordIndex) => (
-              <span key={wordIndex} className="word">
-                {instrument !== 'vocals' && word.chords && (
-                  <span className="chords">{word.chords} </span>
-                )}
-                <span className="lyrics">{word.lyrics} </span>
-              </span>
-            ))}
-          </div>
-        ))}
+        {songData.map((line, lineIndex) => {
+          let lineWords = '';
+          let lineChords = '';
+          let chordPosition = 0; // Tracks the current position in the lineChords
+
+          line.forEach((word) => {
+            const wordLength = word.lyrics.length;
+            let spacesToAdd = wordLength; // Default spacing
+
+            if (word.chords) {
+              // Ensure chords align above lyrics by adding required spaces
+              const spaceDifference = Math.max(
+                0,
+                wordLength - word.chords.length
+              );
+              spacesToAdd = spaceDifference;
+
+              // Add spaces to match alignment with lyrics
+              lineChords += ' '.repeat(chordPosition) + word.chords;
+            }
+
+            // Append lyrics and move position forward
+            lineWords += word.lyrics + ' ';
+            chordPosition += wordLength + 1; // Move forward considering spaces
+          });
+
+          console.log(`Line ${lineIndex} Chords:`, lineChords);
+          console.log(`Line ${lineIndex} Words:`, lineWords);
+
+          return (
+            <div key={lineIndex} className="song-line">
+              {/* Chords line (only shown if not vocals) */}
+              {instrument !== 'vocals' && (
+                <div className="chords-line">{lineChords}</div>
+              )}
+
+              {/* Lyrics line */}
+              <div className="lyrics-line">{lineWords}</div>
+            </div>
+          );
+        })}
       </div>
 
       <button

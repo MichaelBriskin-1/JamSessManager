@@ -1,6 +1,6 @@
 const express = require('express');
 const fs = require('fs');
-const {getIO}  = require('../configs/socket');
+const { getIO } = require('../configs/socket');
 
 const path = require('path');
 const cwd = process.cwd();
@@ -39,9 +39,8 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.get('/:searchSong',async (req,res) => {
-  try{
-  
+router.get('/:searchSong', async (req, res) => {
+  try {
     const searchSong = req.params.searchSong;
     const songsList = await getAllSongs();
 
@@ -50,13 +49,10 @@ router.get('/:searchSong',async (req,res) => {
     );
 
     res.json(matchingSongs);
-  }
-  catch(error){
+  } catch (error) {
     res.status(500).json({ message: 'Error searching songs', error });
   }
-  
 });
-
 
 router.get('/select/:songName', async (req, res) => {
   try {
@@ -69,16 +65,16 @@ router.get('/select/:songName', async (req, res) => {
     }
 
     const songData = JSON.parse(fs.readFileSync(songPath, 'utf8'));
-    
-    // Emit the song data to all connected clients
-    getIO().emit('songUpdate', songData);
 
-    res.json(songData);
+    const data = { "songData":songData,"songName": songName };
+    // Emit the song data to all connected clients
+    getIO().emit('songUpdate', data);
+
+    
+    res.json(data);
   } catch (error) {
     res.status(500).json({ message: 'Invalid song request', error });
   }
 });
 
 module.exports = router;
-
-

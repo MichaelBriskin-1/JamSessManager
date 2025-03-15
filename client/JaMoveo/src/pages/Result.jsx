@@ -28,9 +28,10 @@ function ResultsPage() {
         return;
       }
 
-      await axios.post(`${API_URL}/api/songs/select`, res.data);
-      socket.emit('songUpdate', res.data);
-      navigate('/livepage');
+      
+      // socket.emit('songUpdate', res.data);
+      console.log("res.data",res.data);
+      navigate('/livepage', { state: { songData: res.data.songData,songName: res.data.songName } });
     } catch (error) {
       alert('Error selecting song.');
     }

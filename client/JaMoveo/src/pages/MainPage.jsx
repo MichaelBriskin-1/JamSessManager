@@ -38,8 +38,8 @@ function MainPage() {
     
   };
 
-  const navigateToLive = (songData) => {
-    navigate('/livepage', { state: {  songData } });
+  const navigateToLive = (songObject) => {
+    navigate('/livepage', { state: { songData: songObject.songData,songName: songObject.songName } });
   }
 
   socket.on("songUpdate", (songData) => {
