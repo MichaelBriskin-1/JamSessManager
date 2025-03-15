@@ -88,23 +88,21 @@ function LivePage() {
 
           line.forEach((word) => {
             const wordLength = word.lyrics.length;
-            let spacesToAdd = wordLength; // Default spacing
+            
 
             if (word.chords) {
               // Ensure chords align above lyrics by adding required spaces
-              const spaceDifference = Math.max(
-                0,
-                wordLength - word.chords.length
-              );
-              spacesToAdd = spaceDifference;
 
               // Add spaces to match alignment with lyrics
-              lineChords += ' '.repeat(chordPosition) + word.chords;
+              lineChords += ' '.repeat(wordLength/2)+ word.chords+' '.repeat(wordLength/2) ;
+            }
+            else{
+              lineChords += ' '.repeat(wordLength);
             }
 
             // Append lyrics and move position forward
             lineWords += word.lyrics + ' ';
-            chordPosition += wordLength + 1; // Move forward considering spaces
+            // lineChords += ' ';
           });
 
           console.log(`Line ${lineIndex} Chords:`, lineChords);
