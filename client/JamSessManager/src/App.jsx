@@ -12,7 +12,7 @@ function App() {
 
   return (
     <div>
-      <h1>JaMoveo</h1>
+      <h1>JamSessManager</h1>
       <Routes>
         <Route path="/" element={<Login setCurrentUser={setCurrentUser} />} />
         <Route path="/signup" element={<Signup />} />
