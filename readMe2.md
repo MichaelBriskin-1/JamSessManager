@@ -1,7 +1,7 @@
 # User Registration Guide
 
 ## Overview
-This guide explains how to create a **regular user (player)** or an **admin user** in the Jamoveo web application.
+This guide explains how to create a **regular user (player)** or an **admin user** in the JamSessManager web application.
 
 ## Creating a Regular User (Player)
 

@@ -1,8 +1,8 @@
-# Jamoveo Web Application
+# JamSessManager Web Application
 
 ## Overview
 
-Jamoveo is a web-based platform that allows musicians to search for songs, display lyrics and chords, and perform live. The application supports user roles for **players** and **admins**, with real-time song updates using WebSockets.
+JamSessManager is a web-based platform that allows musicians to search for songs, display lyrics and chords, and perform live. The application supports user roles for **players** and **admins**, with real-time song updates using WebSockets.
 
 ## Features
 
@@ -25,7 +25,7 @@ Ensure you have the following installed:
 1. **Clone the repository**:
    ```sh
    git clone <repository-url>
-   cd jamoveo-web
+   cd JamSessManager-web
    ```
 2. **Install dependencies**:
    ```sh
