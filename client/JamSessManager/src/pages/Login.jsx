@@ -16,10 +16,14 @@ function Login({ setCurrentUser }) {
       return;
     }
     try {
-      const res = await axios.post(`${API_URL}/api/users/login`, {
-        username,
-        password,
-      });
+      const res = await axios.post(
+        `${API_URL}/api/users/login`,
+        {
+          username,
+          password,
+        },
+        { withCredentials: true }
+      );
 
       localStorage.setItem('token', res.data.token);
       localStorage.setItem('role', res.data.user.role);
