@@ -39,6 +39,20 @@ app.use(
   })
 );
 
+app.options(
+  '*',
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true,
+  })
+);
+
 app.use('/api/users', usersRoute);
 app.use('/api/songs', songsRoute);
 
