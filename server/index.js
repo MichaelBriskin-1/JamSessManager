@@ -27,22 +27,7 @@ app.use(cors());
 app.use('/api/users', usersRoute);
 app.use('/api/songs', songsRoute);
 
-let selectedSong = null;
-// io.on('connection', (socket) => {
-//   console.log('A user connected!');
-//   socket.emit('songUpdate', selectedSong);
 
-//   socket.on('quitSong', () => {
-//     selectedSong = null;
-//     io.emit('quitSong');
-//   });
-
-//   socket.on('disconnect', () => {
-//     console.log('A user disconnected.');
-//   });
-// });
-
-// Export `io` for use in other files
 
 server.listen(PORT, () => {
   console.log(`server is listening at http://localhost:${PORT}`);

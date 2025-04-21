@@ -1,14 +1,16 @@
 const { Server } = require('socket.io');
 
-let io; // Define io outside to be accessible in other modules
+let io; 
 let selectedSong = null;
 const initializeSocket = (server) => {
-  io = new Server(server, {
+  const io = new Server(server, {
     cors: {
       origin: [process.env.FRONTEND_URL, 'http://localhost:5173'],
       methods: ['GET', 'POST'],
     },
   });
+  console.log('CORS Allowed Origins:', process.env.FRONTEND_URL, 'http://localhost:5173');
+
 
   io.on('connection', (socket) => {
     console.log('A user connected!');
